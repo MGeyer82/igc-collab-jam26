@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/igcCollabJam26/.vs
+/igcCollabJam26/igcCollabJam26/x64
+*.pdb
+*.user
