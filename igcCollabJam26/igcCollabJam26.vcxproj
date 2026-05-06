@@ -109,7 +109,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Programming\SFML-3.0.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s-d.lib;opengl32.lib;freetype.lib;sfml-window-s-d.lib;winmm.lib;gdi32.lib;sfml-system-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s-d.lib;opengl32.lib;freetype.lib;sfml-window-s-d.lib;winmm.lib;gdi32.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\Wub_Wub_Thing.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

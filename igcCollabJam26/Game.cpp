@@ -6,6 +6,7 @@
 Game::Game()
 {
 	loadTextures();
+	loadMusic();
 
 	initVariables();
 	initWindow();
@@ -51,6 +52,19 @@ void Game::loadTextures()
 
 }
 
+void Game::loadMusic()
+{
+	if (!music.openFromFile(".\\assets\\Wub_Wub_Thing.wav"))
+	{
+		throwLoadError("Failed to load music!", ".\\assets\\Wub_Wub_Thing.wav");
+	}
+	else
+	{
+		music.play();
+		clock.restart(); // Start the clock when the music starts playing
+	}
+}
+
 /**
 *	Getters / Setters
 */
@@ -93,69 +107,99 @@ void Game::pollEvents()
 
 		}
 
-		// TODO: Get this to trigger once per key press and fix note fade
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
-		{
-			this->pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);;
+		// Space key press handling - note hit detection
+		this->pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);;
 
 			if (this->pressed && !this->was_pressed)
 			{
-				//// enlarge notes while adjusting transparency to indicate note hit
-				//float noteFadeTimer = 0.f;
+				// enlarge notes while adjusting transparency to indicate note hit
+				notes.front().fading = true;
 
-				//if (noteFadeTimer < 60.f)
-				//{
-				//	noteFadeTimer += 1.f;
-				//	this->notes.front().setFillColor(sf::Color(255, 0, 0, static_cast<uint8_t>(255 - (noteFadeTimer * 2.f))));
-				//	this->notes.front().setSize(this->note_size + sf::Vector2f(noteFadeTimer, noteFadeTimer));
-				//}
-
-				std::cout << "Pressed space!" << std::endl;
-
-				// then pop the note from the vector...
-				if (!notes.empty())
-				this->notes.erase(this->notes.begin());
+				//std::cout << "Pressed space!" << std::endl;
 			}
 
 			this->was_pressed = this->pressed;
-		}
 	}
 }
 
 void Game::spawnNote()
 {
-	this->note.setPosition(this->note_spawn_position);
-	this->note.setFillColor(sf::Color::Red);
-	this->note.setSize(this->note_size);
+	this->note.shape.setPosition(this->note_spawn_position);
+	this->note.shape.setFillColor(sf::Color::Red);
+	this->note.shape.setSize(this->note_size);
 
 	this->notes.push_back(this->note);
 }
 
+void Game::fadeNote(Note& note)
+{
+	// Begin the fade animation for the note
+	if (note.fading)
+	{
+		// TODO: This needs some tweaking to look better... also only seem to fade one note at a time?
+		
+		//if (note.fadeTimer < 30.f)
+		//{
+		//	note.fadeTimer += 1.f;
+		//	this->notes.front().shape.setFillColor(sf::Color(255, 0, 0, static_cast<uint8_t>(255 - (note.fadeTimer * 2.f))));
+		//	this->notes.front().shape.setSize(this->note_size + sf::Vector2f(note.fadeTimer, note.fadeTimer));
+		//}
+		//else // Once the fade animation is complete, mark the note as faded
+		//{
+			note.faded = true;
+		//}
+	}
+
+	// Once the note has fully faded, remove it from the vector
+	if (note.faded)
+	{
+		// then pop the note from the vector...
+		if (!notes.empty())
+			this->notes.erase(this->notes.begin());
+	}
+}
+
 void Game::updateNotes()
 {
-	//std::cout << this->noteSpawnTimer << std::endl;
+	float distance = (this->note_spawn_position.x - this->judge_line.getPosition().x);
+	float noteSpeed = distance / this->travelTime;
 
-	if (this->noteSpawnTimer >= this->noteSpawnTimerMax)
+	// if the note spawn timer has reached its max, spawn a new note and reset the timer	
+	noteSpawnTimer += this->deltaTime;
+
+	while (this->noteSpawnTimer >= this->secondsPerBeat)
 	{
 		spawnNote();
-		this->noteSpawnTimer = 0.f;
-	}
-	else
-	{
-		this->noteSpawnTimer += 1.f;
+		this->noteSpawnTimer -= this->secondsPerBeat;
 	}
 
+	// move the notes and handle fading
 	for (auto& note : this->notes)
 	{
-		note.move( { -5.f, 0.f } );
+		if (!note.fading)
+		{
+			note.shape.move({ -noteSpeed * deltaTime, 0.f });
+		}
+		else
+		{
+			fadeNote(note);
+		}
+
+		if (note.shape.getPosition().x < 0.f)
+		{
+			//std::cout << "Missed Note!" << std::endl;
+			this->notes.erase(this->notes.begin());
+		}
 	}
 }
 
 void Game::update()
 {
 	// run implementation
-	pollEvents();
+	this->deltaTime = this->clock.restart().asSeconds();
+	this->deltaTime = std::min(this->deltaTime, 0.1f);
 
+	pollEvents();
 	updateNotes();
 }
 
@@ -168,7 +212,7 @@ void Game::renderNotes()
 {
 	for (auto& note : this->notes)
 	{
-		this->window->draw(note);
+		this->window->draw(note.shape);
 	}
 }
 
@@ -185,7 +229,7 @@ void Game::render()
 	this->window->display();
 }
 
-void Game::throwError(const std::string& message, std::optional<std::string> path) const
+void Game::throwLoadError(const std::string& message, std::optional<std::string> path) const
 {
 	std::cerr << "Error: " << message;
 	if (path)
