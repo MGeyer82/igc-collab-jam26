@@ -57,12 +57,12 @@ public:
 	struct Note {
 		sf::RectangleShape shape;
 		bool isHit = false;
-		bool fading = false;
 		bool faded = false;
 		float fadeTimer = 0.f;
 	};
 
 	std::vector<Note> notes;
+	std::vector<Note> fadingNotes;
 	Note note;
 
 	// Getters / Setters
