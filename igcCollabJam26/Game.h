@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <deque>
 #include <SFML/Window.hpp>
 #include <SFML/Main.hpp>
 #include <SFML/Graphics.hpp>
@@ -9,6 +10,8 @@
 /*
 	Wrapper class for SFML's window creation, event handling, and rendering - aka game engine
 */
+class Enemy;
+
 class Game
 {
 private:
@@ -26,7 +29,7 @@ private:
 	// -- Modes and Dimensions --
 	sf::VideoMode video_mode;
 	sf::RenderWindow* window;
-	sf::Vector2u window_size{ 800, 600 };
+	sf::Vector2u window_size{ 1280, 720 };
 	float window_fps_limit = 60.f;
 
 	// -- Music --
@@ -37,16 +40,11 @@ private:
 	float secondsPerBeat = 60.f / bpm;
 	float noteSpawnTimer = secondsPerBeat;
 
-	float beatsToTravel = 2.f;
+	float beatsToTravel = 4.f;
 	float travelTime = beatsToTravel * secondsPerBeat;
 
 	bool pressed;
 	bool was_pressed = false;
-
-	// Game objects
-	sf::Vector2f note_size{ 5.f, 45.f };
-	sf::Vector2f note_spawn_position{ static_cast<float>(this->window_size.x), static_cast<float>(this->window_size.y) - 100.f };
-	sf::RectangleShape judge_line;
 
 public:
 	// Constructor / Destructor
@@ -61,9 +59,24 @@ public:
 		float fadeTimer = 0.f;
 	};
 
-	std::vector<Note> notes;
-	std::vector<Note> fadingNotes;
+	struct Sword {
+
+	};
+
+	struct Enemy {
+
+	};
+
+	sf::RectangleShape judge_line;
+
+	sf::Vector2f note_size{ 5.f, 45.f };
+	sf::Vector2f note_spawn_position{ static_cast<float>(window_size.x), static_cast<float>(window_size.y) - 100.f };
+
+	std::deque<Note> notes;
+	std::deque<Note> fadingNotes;
 	Note note;
+
+	Enemy* enemy;
 
 	// Getters / Setters
 	bool getRunStatus() const;
@@ -77,6 +90,7 @@ public:
 	void renderJudgeLine();
 	void renderNotes();
 	void fadeNote(Note& note);
+	void gradeNote(Note& note);
 	void render();
 
 	void throwLoadError(const std::string& message, std::optional<std::string> path = std::nullopt) const;

@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Enemy.h"
 
 /**
 *	Game class constructor / destructor
@@ -32,7 +33,7 @@ void Game::initWindow()
 	// initialize window
 	video_mode.size.x = window_size.x;	// width
 	video_mode.size.y = window_size.y;	// height
-	window = new sf::RenderWindow(video_mode, "Collab Jam 26");
+	window = new sf::RenderWindow(video_mode, "Collab Jam 26", sf::State::Fullscreen);
 
 	window->setFramerateLimit(60);
 }
@@ -44,6 +45,7 @@ void Game::initObjects()
 	judge_line.setFillColor(sf::Color::White);
 	judge_line.setPosition({ 50.f, window_size.y - 100.f });
 
+	// init enemy
 
 }
 
@@ -57,11 +59,6 @@ void Game::loadMusic()
 	if (!music.openFromFile(".\\assets\\Wub_Wub_Thing.wav"))
 	{
 		throwLoadError("Failed to load music!", ".\\assets\\Wub_Wub_Thing.wav");
-	}
-	else
-	{
-		music.play();
-		clock.restart(); // Start the clock when the music starts playing
 	}
 }
 
@@ -96,9 +93,17 @@ void Game::pollEvents()
 		{
 			switch (keyPress->code)
 			{
-			case sf::Keyboard::Key::Escape:
-				window->close();
-				break;
+				case sf::Keyboard::Key::Escape:
+					window->close();
+					break;
+			
+				case sf::Keyboard::Key::Enter:
+					if (music.getStatus() != sf::Music::Status::Playing)
+					{
+						music.play();
+						clock.restart(); // Start the clock when the music starts playing
+					}
+					break;
 			}
 		}
 
@@ -116,17 +121,13 @@ void Game::pollEvents()
 
 			if (notes.empty())
 			{
-				std::cout << "empty vector!" << std::endl;
 				return;
 			}
 
-			std::cout << "contained at least one note... " << std::endl;
-
-			// remove note from notes vector and add to fadingNotes vector to begin fade animation
-			notes.erase(notes.begin());
+			// Add note to fadingNotes then remove from notes vector to begin fade animation
 			fadingNotes.push_back(notes.front());
+			notes.pop_front();
 
-			//std::cout << "Pressed space!" << std::endl;
 		}
 
 		was_pressed = pressed;
@@ -142,18 +143,49 @@ void Game::spawnNote()
 	notes.push_back(note);
 }
 
+void Game::gradeNote(Note& note)
+{
+	// Calculate the distance between the note and the judge line
+	float distance = std::abs(note.shape.getPosition().x - judge_line.getPosition().x);
+
+	// Define thresholds for grading (these values can be adjusted based on gameplay feel)
+	const float perfectThreshold = 10.f;
+	const float goodThreshold = 30.f;
+	const float badThreshold = 50.f;
+
+	// Grade the note based on the distance
+	if (distance <= perfectThreshold)
+	{
+		std::cout << "Perfect!" << std::endl;
+	}
+	else if (distance <= goodThreshold)
+	{
+		std::cout << "Good!" << std::endl;
+	}
+	else if (distance <= badThreshold)
+	{
+		std::cout << "Bad!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Miss!" << std::endl;
+	}
+	note.isHit = true; // Mark the note as hit
+}
+
 void Game::fadeNote(Note& note)
 {
 	// Begin the fade animation for the note
-
-	// TODO: This needs some tweaking to look better... also only seem to fade one note at a time?
 		
 	// enlarge notes while adjusting transparency to indicate note hit
-	if (note.fadeTimer < 30.f)
+	if (note.fadeTimer < 15.f)
 	{
 		note.fadeTimer += 1.f;
-		this->notes.front().shape.setFillColor(sf::Color(255, 0, 0, static_cast<uint8_t>(255 - (note.fadeTimer * 2.f))));
-		this->notes.front().shape.setSize(this->note_size + sf::Vector2f(note.fadeTimer, note.fadeTimer));
+		float fadeProgress = note.fadeTimer / 15.f; // Normalize fade timer to [0, 1] range
+
+		fadingNotes.front().shape.setOrigin({ note_size.x / 2.f, note_size.y / 2.f });
+		fadingNotes.front().shape.setFillColor(sf::Color(255, 0, 0, static_cast<uint8_t>(255 * (1.f - fadeProgress))));
+		fadingNotes.front().shape.setScale(sf::Vector2f(note.fadeTimer * 0.5f, note.fadeTimer * 0.25f));
 	}
 	else // Once the fade animation is complete, mark the note as faded
 	{
@@ -165,7 +197,7 @@ void Game::fadeNote(Note& note)
 	{
 		// then pop the note from the vector...
 		if (!fadingNotes.empty())
-			fadingNotes.erase(fadingNotes.begin());
+			fadingNotes.pop_front();
 	}
 }
 
@@ -204,12 +236,16 @@ void Game::updateNotes()
 
 void Game::update()
 {
-	// run implementation
-	deltaTime = clock.restart().asSeconds();
-	deltaTime = std::min(deltaTime, 0.1f);
-
 	pollEvents();
-	updateNotes();
+
+	// run implementation
+	if (music.getStatus() == sf::Music::Status::Playing)
+	{
+		deltaTime = clock.restart().asSeconds();
+		deltaTime = std::min(deltaTime, 0.1f);
+
+		updateNotes();
+	}
 }
 
 void Game::renderJudgeLine()
@@ -222,6 +258,11 @@ void Game::renderNotes()
 	for (auto& note : notes)
 	{
 		window->draw(note.shape);
+	}
+
+	for (auto& f_note : fadingNotes)
+	{
+		window->draw(f_note.shape);
 	}
 }
 
