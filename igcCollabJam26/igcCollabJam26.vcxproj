@@ -127,16 +127,59 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Music.h" />
+    <ClInclude Include="SFX.h" />
+    <ClInclude Include="Textures.h" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="assets\Wub_Wub_Thing.wav" />
+    <Media Include="assets\music\dark_forest.wav" />
+    <Media Include="assets\music\frantic_castle.wav" />
+    <Media Include="assets\music\test_1.wav" />
+    <Media Include="assets\sfx\menu_button_hover.wav" />
+    <Media Include="assets\sfx\menu_click.wav" />
+    <Media Include="assets\sfx\sword_hit_1.wav" />
+    <Media Include="assets\sfx\sword_hit_2.wav" />
+    <Media Include="assets\sfx\sword_hit_3.wav" />
+    <Media Include="assets\sfx\sword_hit_4.wav" />
+    <Media Include="assets\sfx\sword_hit_5.wav" />
+    <Media Include="assets\sfx\sword_hit_6.wav" />
+    <Media Include="assets\sfx\sword_hit_7.wav" />
+    <Media Include="assets\sfx\sword_swing_1.wav" />
+    <Media Include="assets\sfx\sword_swing_10.wav" />
+    <Media Include="assets\sfx\sword_swing_11.wav" />
+    <Media Include="assets\sfx\sword_swing_12.wav" />
+    <Media Include="assets\sfx\sword_swing_2.wav" />
+    <Media Include="assets\sfx\sword_swing_3.wav" />
+    <Media Include="assets\sfx\sword_swing_4.wav" />
+    <Media Include="assets\sfx\sword_swing_5.wav" />
+    <Media Include="assets\sfx\sword_swing_6.wav" />
+    <Media Include="assets\sfx\sword_swing_7.wav" />
+    <Media Include="assets\sfx\sword_swing_8.wav" />
+    <Media Include="assets\sfx\sword_swing_9.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\sprites\enemy\enemy_down.png" />
+    <Image Include="assets\sprites\enemy\enemy_left.png" />
+    <Image Include="assets\sprites\enemy\enemy_right.png" />
+    <Image Include="assets\sprites\enemy\enemy_up.png" />
+    <Image Include="assets\sprites\layout\border.png" />
+    <Image Include="assets\sprites\layout\castle_1.png" />
+    <Image Include="assets\sprites\layout\castle_2.png" />
+    <Image Include="assets\sprites\layout\dark_forest_1.png" />
+    <Image Include="assets\sprites\layout\dark_forest_2.png" />
+    <Image Include="assets\sprites\layout\outdoors_1.png" />
+    <Image Include="assets\sprites\layout\outdoors_2.png" />
+    <Image Include="assets\sprites\layout\rhythm_bar.png" />
+    <Image Include="assets\sprites\player\down_swing_1.png" />
+    <Image Include="assets\sprites\player\down_swing_2.png" />
+    <Image Include="assets\sprites\player\sword_idle.png" />
+    <Image Include="assets\sprites\player\up_swing_1.png" />
+    <Image Include="assets\sprites\player\up_swing_2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

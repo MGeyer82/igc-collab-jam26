@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\music">
+      <UniqueIdentifier>{16425f5d-87f5-4a24-be73-aa3424316baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sprites">
+      <UniqueIdentifier>{437b807c-d5a1-4e24-884e-f2f9a5279fd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sfx">
+      <UniqueIdentifier>{cd151326-68fd-4f00-86a8-3eba4978f21f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sprites\enemy">
+      <UniqueIdentifier>{4252401d-84c9-47ac-a6ea-95ee2eacd820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sprites\player">
+      <UniqueIdentifier>{f8c0881b-80ee-4536-b297-9ffe29d0c6aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\sprites\layout">
+      <UniqueIdentifier>{ead28b5c-05dd-4559-8cfe-6f74cd48d5e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,21 +39,146 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="Textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Music.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="assets\Wub_Wub_Thing.wav">
-      <Filter>Resource Files</Filter>
+    <Media Include="assets\music\test_1.wav">
+      <Filter>Resource Files\music</Filter>
     </Media>
+    <Media Include="assets\music\dark_forest.wav">
+      <Filter>Resource Files\music</Filter>
+    </Media>
+    <Media Include="assets\music\frantic_castle.wav">
+      <Filter>Resource Files\music</Filter>
+    </Media>
+    <Media Include="assets\sfx\menu_button_hover.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\menu_click.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_1.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_2.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_3.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_4.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_5.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_6.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_hit_7.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_1.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_2.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_3.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_4.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_5.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_6.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_7.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_8.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_9.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_10.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_11.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+    <Media Include="assets\sfx\sword_swing_12.wav">
+      <Filter>Resource Files\sfx</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\sprites\enemy\enemy_down.png">
+      <Filter>Resource Files\sprites\enemy</Filter>
+    </Image>
+    <Image Include="assets\sprites\enemy\enemy_left.png">
+      <Filter>Resource Files\sprites\enemy</Filter>
+    </Image>
+    <Image Include="assets\sprites\enemy\enemy_right.png">
+      <Filter>Resource Files\sprites\enemy</Filter>
+    </Image>
+    <Image Include="assets\sprites\enemy\enemy_up.png">
+      <Filter>Resource Files\sprites\enemy</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\border.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\castle_1.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\castle_2.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\dark_forest_1.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\dark_forest_2.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\outdoors_1.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\outdoors_2.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\rhythm_bar.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\player\down_swing_1.png">
+      <Filter>Resource Files\sprites\player</Filter>
+    </Image>
+    <Image Include="assets\sprites\player\down_swing_2.png">
+      <Filter>Resource Files\sprites\player</Filter>
+    </Image>
+    <Image Include="assets\sprites\player\sword_idle.png">
+      <Filter>Resource Files\sprites\player</Filter>
+    </Image>
+    <Image Include="assets\sprites\player\up_swing_1.png">
+      <Filter>Resource Files\sprites\player</Filter>
+    </Image>
+    <Image Include="assets\sprites\player\up_swing_2.png">
+      <Filter>Resource Files\sprites\player</Filter>
+    </Image>
   </ItemGroup>
 </Project>

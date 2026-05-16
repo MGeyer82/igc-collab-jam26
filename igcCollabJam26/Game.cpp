@@ -1,5 +1,7 @@
 #include "Game.h"
-#include "Enemy.h"
+#include "Textures.h"
+#include "Music.h"
+#include "SFX.h"
 
 /**
 *	Game class constructor / destructor
@@ -8,9 +10,13 @@ Game::Game()
 {
 	loadTextures();
 	loadMusic();
+	loadSFX();
 
 	initVariables();
 	initWindow();
+	resizeWindow();
+	initLayout();
+	initSprites();
 	initObjects();
 }
 
@@ -22,6 +28,102 @@ Game::~Game()
 /**
 *	Private functions
 */
+void Game::loadTextures()
+{
+	//std::cout << std::filesystem::current_path() << '\n';
+
+	// Player textures
+	for (auto& [index, path] : player_paths)
+	{
+		if (!player.textures[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading texture from file: ", path);
+		}
+	}
+
+	// Enemy textures
+	for (auto& [index, path] : enemy_paths)
+	{
+		if (!enemy.textures[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading texture from file: ", path);
+		}
+	}
+
+	// Layout textures
+	for (auto& [index, path] : layout_paths)
+	{
+		if (!layoutTextures[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading texture from file: ", path);
+		}
+	}
+}
+
+void Game::loadMusic()
+{
+	for (auto& [index, path] : music_paths)
+	{
+		if (!bgm[index].openFromFile(path))
+		{
+			throwLoadError("Error loading music from file: ", path);
+		}
+	}
+}
+
+void Game::loadSFX()
+{
+	// menu SFX
+	for (auto& [index, path] : menu_paths)
+	{
+		if (!menu_sfx[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading sfx from file: ", path);
+		}
+	}
+
+	// swing SFX
+	for (auto& [index, path] : swing_paths)
+	{
+		if (!swing_sfx[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading sfx from file: ", path);
+		}
+	}
+
+	// hit SFX
+	for (auto& [index, path] : hit_paths)
+	{
+		if (!hit_sfx[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading sfx from file: ", path);
+		}
+	}
+}
+
+void Game::resizeWindow()
+{
+	sf::Vector2u window_size = getWindowSize();
+
+	float windowRatio =
+		static_cast<float>(window_size.x) / window_size.y;
+
+	float viewRatio =
+		static_cast<float>(game_size.x) / game_size.y;
+
+	float sizeX = 1.f;
+	float sizeY = 1.f;
+	float posX = 0.f;
+	float posY = 0.f;
+
+	bool horizontalSpacing = windowRatio > viewRatio;
+
+	if (horizontalSpacing)
+	{
+		sizeX = viewRatio / windowRatio;
+	}
+}
+
 void Game::initVariables()
 {
 	// initialize variables
@@ -31,11 +133,46 @@ void Game::initVariables()
 void Game::initWindow()
 {
 	// initialize window
-	video_mode.size.x = window_size.x;	// width
-	video_mode.size.y = window_size.y;	// height
-	window = new sf::RenderWindow(video_mode, "Collab Jam 26", sf::State::Fullscreen);
+	window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Cursed Cadence", sf::State::Fullscreen);
+
+	sf::View view(sf::FloatRect(
+		{ 0.f, 0.f },
+		{ game_size.x, game_size.y }
+	));
+
+	window->setView(view);
 
 	window->setFramerateLimit(60);
+}
+
+void Game::initLayout()
+{
+	sf::RectangleShape idleBox;
+	sf::RectangleShape hitBox;
+
+	sf::RectangleShape enemyBox;
+	sf::RectangleShape rhythmBox;
+	sf::RectangleShape worldBox;
+	sf::RectangleShape borderBox;
+
+	// idle box
+	idleBox.setSize({ 135.f, 255.f });
+
+	// swing box
+	hitBox.setSize({ 255.f, 135.f });
+	hitBox.setPosition({ 100.f, 250.f });
+
+	// rhythm section box
+	rhythmBox.setSize({ 1280.f - 50.f, 175.f });
+
+	// enemy box
+	enemyBox.setSize({ 140.f, 200.f });
+
+	// border box
+	borderBox.setSize({ 1280.f - 50.f, 720.f - 50.f });
+
+	// world box
+	worldBox.setSize({ 1230.f, 720.f - 225.f });
 }
 
 void Game::initObjects()
@@ -43,23 +180,36 @@ void Game::initObjects()
 	// init judgement line
 	judge_line.setSize(note_size);
 	judge_line.setFillColor(sf::Color::White);
-	judge_line.setPosition({ 50.f, window_size.y - 100.f });
+	judge_line.setPosition({ 50.f, game_size.y - 100.f });
 
-	// init enemy
-
-}
-
-void Game::loadTextures()
-{
+	// init enemy 
 
 }
 
-void Game::loadMusic()
+void Game::initSprites()
 {
-	if (!music.openFromFile(".\\assets\\Wub_Wub_Thing.wav"))
-	{
-		throwLoadError("Failed to load music!", ".\\assets\\Wub_Wub_Thing.wav");
-	}
+	// TODO: hard coded coordinates - BAD!
+	sf::Sprite border_sprite(layoutTextures.at(LayoutTextures::BORDER));
+	border_sprite.setPosition({ 0.f, 0.f });
+
+	sf::Sprite rhythm_sprite(layoutTextures.at(LayoutTextures::RHYTHM_BAR));
+	rhythm_sprite.setPosition({ 25.f, 580.f });
+
+	sf::Sprite player_sprite(player.textures.at(PlayerTextures::IDLE));
+	player_sprite.setPosition({ 160.f, 100.f });
+
+	sf::Sprite enemy_sprite(enemy.textures.at(EnemyTextures::MOVE_DOWN));
+	enemy_sprite.setPosition({ 750.f, 150.f });
+
+	sf::Sprite world_sprite(layoutTextures.at(LayoutTextures::OUTDOORS_1));
+	world_sprite.setPosition({ 25.f, 25.f });
+
+
+	game_sprites.push_back(world_sprite);
+	game_sprites.push_back(player_sprite);
+	game_sprites.push_back(enemy_sprite);
+	game_sprites.push_back(rhythm_sprite);
+	game_sprites.push_back(border_sprite);
 }
 
 /**
@@ -72,7 +222,7 @@ bool Game::getRunStatus() const
 
 sf::Vector2u Game::getWindowSize() const
 {
-	return window_size;
+	return window->getSize();
 }
 
 /**
@@ -98,9 +248,9 @@ void Game::pollEvents()
 					break;
 			
 				case sf::Keyboard::Key::Enter:
-					if (music.getStatus() != sf::Music::Status::Playing)
+					if (bgm[BGM::STAGE_1].getStatus() != sf::Music::Status::Playing)
 					{
-						music.play();
+						bgm[BGM::STAGE_1].play();
 						clock.restart(); // Start the clock when the music starts playing
 					}
 					break;
@@ -239,7 +389,7 @@ void Game::update()
 	pollEvents();
 
 	// run implementation
-	if (music.getStatus() == sf::Music::Status::Playing)
+	if (bgm[BGM::STAGE_1].getStatus() == sf::Music::Status::Playing)
 	{
 		deltaTime = clock.restart().asSeconds();
 		deltaTime = std::min(deltaTime, 0.1f);
@@ -266,12 +416,22 @@ void Game::renderNotes()
 	}
 }
 
+void Game::renderLayout()
+{
+
+	for (auto& sprite : game_sprites)
+	{
+		window->draw(sprite);
+	}
+}
+
 void Game::render()
 {
 	// clear the screen - default black
 	window->clear(sf::Color::Black);
 
 	// draw everything here...
+	renderLayout();
 	renderJudgeLine();
 	renderNotes();
 
