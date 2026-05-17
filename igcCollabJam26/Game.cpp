@@ -2,6 +2,7 @@
 #include "Textures.h"
 #include "Music.h"
 #include "SFX.h"
+#include "Layout.h"
 
 /**
 *	Game class constructor / destructor
@@ -13,6 +14,7 @@ Game::Game()
 	loadSFX();
 
 	initVariables();
+	initProps();
 	initSprites();
 	initWindow();
 	resizeWindow();
@@ -58,6 +60,15 @@ void Game::loadTextures()
 			throwLoadError("Error loading texture from file: ", path);
 		}
 	}
+
+	// UI textures
+	for (auto& [index, path] : ui_paths)
+	{
+		if (!uiTextures[index].loadFromFile(path))
+		{
+			throwLoadError("Error loading texture from file: ", path);
+		}
+	}
 }
 
 void Game::loadMusic()
@@ -69,6 +80,10 @@ void Game::loadMusic()
 			throwLoadError("Error loading music from file: ", path);
 		}
 	}
+
+	notesToSpawn[0] = 124;
+	notesToSpawn[1] = 256;
+	notesToSpawn[2] = 199;
 }
 
 void Game::loadSFX()
@@ -143,14 +158,6 @@ void Game::initVariables()
 {
 	// initialize variables
 	window = nullptr;
-
-	// game dimensions
-	border_edge_size = 25.f;
-	rhythm_bar_size = { 1230.f, 175.f };
-	rhythm_bar_pos = { border_edge_size, game_size.y - border_edge_size - rhythm_bar_size.y };
-	note_spawn_pos = { game_size.x - border_edge_size - note_size.x,
-					   game_size.y - border_edge_size - (rhythm_bar_size.y / 2.f) - (note_size.y / 2.f) };
-	judge_line_pos = { border_edge_size + 50.f, note_spawn_pos.y };
 }
 
 void Game::initWindow()
@@ -203,15 +210,13 @@ void Game::initObjects()
 void Game::initSprites()
 {
 	// TODO: hard coded coordinates - BAD!
-	sf::Sprite border_sprite(layoutTextures.at(LayoutTextures::BORDER));
-	border_sprite.setPosition({ 0.f, 0.f });
-
 	sf::Sprite rhythm_sprite(layoutTextures.at(LayoutTextures::RHYTHM_BAR));
 	rhythm_sprite.setPosition(rhythm_bar_pos);
 	//rhythm_sprite.setScale({ 1.f, 0.75f });
 
 	sf::Sprite player_sprite(player.textures.at(PlayerTextures::IDLE));
 	player_sprite.setPosition({ 160.f, 100.f });
+	player_sprite.setScale({ 0.8f, 1.f });
 
 	sf::Sprite enemy_sprite(enemy.textures.at(EnemyTextures::MOVE_DOWN));
 	enemy_sprite.setPosition({ 750.f, 150.f });
@@ -225,7 +230,7 @@ void Game::initSprites()
 	game_sprites.push_back(player_sprite);
 	game_sprites.push_back(enemy_sprite);
 	game_sprites.push_back(rhythm_sprite);
-	game_sprites.push_back(border_sprite);
+	//game_sprites.push_back(border_sprite);
 }
 
 /**
@@ -261,7 +266,7 @@ void Game::pollEvents()
 			{
 				case sf::Keyboard::Key::Escape:
 					// open pause menu
-					bgm[BGM::STAGE_1].pause();
+					bgm[BGM::STAGE_3].pause();
 					is_paused = true;
 					break;
 
@@ -270,9 +275,9 @@ void Game::pollEvents()
 					break;
 			
 				case sf::Keyboard::Key::Enter:
-					if (bgm[BGM::STAGE_1].getStatus() != sf::Music::Status::Playing)
+					if (bgm[BGM::STAGE_3].getStatus() != sf::Music::Status::Playing)
 					{
-						bgm[BGM::STAGE_1].play();
+						bgm[BGM::STAGE_3].play();
 						clock.restart(); // Start the clock when the music starts playing
 					}
 					break;
@@ -281,8 +286,11 @@ void Game::pollEvents()
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
-			bgm[BGM::STAGE_1].play();
-			is_paused = false;
+			if (is_paused)
+			{
+				bgm[BGM::STAGE_3].play();
+				is_paused = false;
+			}
 		}
 
 		// Space key press handling - note hit detection
@@ -313,7 +321,11 @@ void Game::spawnNote()
 	note.shape.setFillColor(sf::Color::Red);
 	note.shape.setSize(note_size);
 
+	// enemy spawn
+	game_sprites[2].setPosition(enemy_spawn_pos);
+
 	notes.push_back(note);
+	//enemies.push_back(enemies);
 }
 
 void Game::gradeNote(Note& note)
@@ -359,6 +371,8 @@ void Game::fadeNote(Note& note)
 		fadingNotes.front().shape.setOrigin({ note_size.x / 2.f, note_size.y / 2.f });
 		fadingNotes.front().shape.setFillColor(sf::Color(255, 0, 0, static_cast<uint8_t>(255 * (1.f - fadeProgress))));
 		fadingNotes.front().shape.setScale(sf::Vector2f(note.fadeTimer * 0.5f, note.fadeTimer * 0.25f));
+
+
 	}
 	else // Once the fade animation is complete, mark the note as faded
 	{
@@ -374,18 +388,25 @@ void Game::fadeNote(Note& note)
 	}
 }
 
+void Game::spawnEnemy()
+{
+
+}
+
 void Game::updateNotes()
 {
-	float distance = (note_spawn_position.x - judge_line.getPosition().x);
+	float distance = (note_spawn_pos.x - judge_line.getPosition().x);
 	float noteSpeed = distance / travelTime;
 
 	// if the note spawn timer has reached its max, spawn a new note and reset the timer	
 	noteSpawnTimer += deltaTime;
 
-	while (noteSpawnTimer >= secondsPerBeat)
+	while (noteSpawnTimer >= secondsPerBeat && notesToSpawn[(int)BGM::STAGE_3] != 0)
 	{
 		spawnNote();
+		//spawnEnemy();
 		noteSpawnTimer -= secondsPerBeat;
+		notesToSpawn[(int)BGM::STAGE_3]--;
 	}
 
 	// move the notes along the screen and remove any that pass the left boundary of the window (missed notes)
@@ -414,12 +435,34 @@ void Game::updateScenes()
 
 void Game::updateEnemies()
 {
+	float distance = (note_spawn_pos.x - judge_line.getPosition().x);
+	float enemySpeed = distance / travelTime;
 
+	// move the enemies along the screen and remove any that pass the left boundary of the window (missed notes)
+	for (auto& note : this->notes)
+	{
+		enemy.shape.move({ -enemySpeed * deltaTime, 0.f });
+
+		if (enemy.shape.getPosition().x < 0.f)
+		{
+			//std::cout << "Missed Note!" << std::endl;
+			enemies.erase(enemies.begin());
+		}
+	}
+
+	//// handle fading enemies
+	//for (auto& f_enemy : fadingEnemies)
+	//{
+	//	fadeEnemy(f_enemy);
+	//}
 }
 
 void Game::update()
 {
 	pollEvents();
+
+	deltaTime = clock.restart().asSeconds();
+	deltaTime = std::min(deltaTime, 0.1f);
 
 	if (is_paused)
 	{
@@ -427,11 +470,8 @@ void Game::update()
 	}
 
 	// run implementation
-	if (bgm[BGM::STAGE_1].getStatus() == sf::Music::Status::Playing)
+	if (bgm[BGM::STAGE_3].getStatus() == sf::Music::Status::Playing)
 	{
-		deltaTime = clock.restart().asSeconds();
-		deltaTime = std::min(deltaTime, 0.1f);
-
 		updateNotes();
 	}
 
@@ -466,15 +506,42 @@ void Game::renderLayout()
 	}
 }
 
+void Game::renderBorder()
+{
+	sf::Sprite border_sprite(layoutTextures.at(LayoutTextures::BORDER));
+	border_sprite.setPosition({ 0.f, 0.f });
+
+	window->draw(border_sprite);
+}
+
+void Game::renderEnemies()
+{
+	for (auto& enemy : enemies)
+	{
+		window->draw(enemy.shape);
+	}
+
+	for (auto& f_enemy : fadingEnemies)
+	{
+		window->draw(f_enemy.shape);
+	}
+}
+
 void Game::renderPauseMenu()
 {
 	sf::RectangleShape pause_rect;
 
-	pause_rect.setFillColor(sf::Color(0, 0, 0, 128));
+	pause_rect.setFillColor(sf::Color(0, 0, 0, 200));
 	pause_rect.setPosition({ 0.f, 0.f });
 	pause_rect.setSize(game_size);
 
+	pause_menu_size = { 400.f, 500.f };
+	pause_menu_pos = { (game_size.x / 2.f) - (pause_menu_size.x / 2.f), (game_size.y / 2.f) - (pause_menu_size.y / 2.f) };
+	sf::Sprite pause_menu(uiTextures.at(uiTextures::PAUSE_OPEN));
+	pause_menu.setPosition(pause_menu_pos);
+
 	window->draw(pause_rect);
+	window->draw(pause_menu);
 
 }
 
@@ -487,6 +554,8 @@ void Game::render()
 	renderLayout();
 	renderJudgeLine();
 	renderNotes();
+	renderEnemies();
+	renderBorder();
 
 	if (is_paused)
 	{

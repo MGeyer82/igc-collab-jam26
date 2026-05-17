@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Layout.h" />
     <ClInclude Include="Music.h" />
     <ClInclude Include="SFX.h" />
     <ClInclude Include="Textures.h" />
@@ -172,9 +173,15 @@
     <Image Include="assets\sprites\layout\castle_2.png" />
     <Image Include="assets\sprites\layout\dark_forest_1.png" />
     <Image Include="assets\sprites\layout\dark_forest_2.png" />
+    <Image Include="assets\sprites\layout\enter.png" />
+    <Image Include="assets\sprites\layout\enter_pressed.png" />
     <Image Include="assets\sprites\layout\outdoors_1.png" />
     <Image Include="assets\sprites\layout\outdoors_2.png" />
+    <Image Include="assets\sprites\layout\pause_closed.png" />
+    <Image Include="assets\sprites\layout\pause_open.png" />
     <Image Include="assets\sprites\layout\rhythm_bar.png" />
+    <Image Include="assets\sprites\layout\space.png" />
+    <Image Include="assets\sprites\layout\space_pressed.png" />
     <Image Include="assets\sprites\player\down_swing_1.png" />
     <Image Include="assets\sprites\player\down_swing_2.png" />
     <Image Include="assets\sprites\player\sword_idle.png" />

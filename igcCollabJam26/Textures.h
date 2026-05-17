@@ -31,6 +31,16 @@ enum class LayoutTextures
     CASTLE_2
 };
 
+enum class uiTextures
+{
+    PAUSE_OPEN,
+    PAUSE_CLOSED,
+    ENTER,
+    ENTER_PRESSED,
+    SPACE,
+    SPACE_PRESSED
+};
+
 const std::unordered_map<PlayerTextures, std::string> player_paths{
     { PlayerTextures::IDLE,            "assets/sprites/player/sword_idle.png"      },
     { PlayerTextures::UP_SWING_1,      "assets/sprites/player/up_swing_1.png"      },
@@ -55,4 +65,13 @@ const std::unordered_map<LayoutTextures, std::string> layout_paths{
     { LayoutTextures::FOREST_2,     "assets/sprites/layout/dark_forest_2.png"    },
     { LayoutTextures::CASTLE_1,     "assets/sprites/layout/castle_1.png"         },
     { LayoutTextures::CASTLE_2,     "assets/sprites/layout/castle_2.png"         }
+};
+
+const std::unordered_map<uiTextures, std::string> ui_paths{
+    { uiTextures::PAUSE_OPEN,       "assets/sprites/layout/pause_open.png"          },
+    { uiTextures::PAUSE_CLOSED,     "assets/sprites/layout/pause_closed.png"        },
+    { uiTextures::ENTER,            "assets/sprites/layout/enter.png"               },
+    { uiTextures::ENTER_PRESSED,    "assets/sprites/layout/enter_pressed.png"       },
+    { uiTextures::SPACE,            "assets/sprites/layout/space.png"               },
+    { uiTextures::SPACE_PRESSED,    "assets/sprites/layout/space_pressed.png"       }
 };

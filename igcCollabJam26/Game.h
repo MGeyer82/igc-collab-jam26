@@ -20,6 +20,7 @@ class Game
 {
 private:
 	void initVariables();
+	void initProps();
 	void initWindow();
 	void initObjects();
 	void initLayout();
@@ -45,6 +46,7 @@ private:
 	sf::Vector2f rhythm_bar_size;
 	sf::Vector2f rhythm_bar_pos;
 	sf::Vector2f judge_line_pos;
+	sf::Vector2f pause_menu_size;
 
 	// -- Sprites --
 	std::vector<sf::Sprite> game_sprites;
@@ -58,9 +60,10 @@ private:
 	std::unordered_map<swingSFX, sf::SoundBuffer> swing_sfx;
 
 	// Game logic
-	float bpm = 135.f;
+	float bpm = 75.f;
 	float secondsPerBeat = 60.f / bpm;
 	float noteSpawnTimer = secondsPerBeat;
+	float notesToSpawn[3];
 
 	float beatsToTravel = 4.f;
 	float travelTime = beatsToTravel * secondsPerBeat;
@@ -92,7 +95,7 @@ public:
 	};
 
 	struct Enemy {
-		int hp = 0;
+		sf::RectangleShape shape;
 		sf::Vector2f position;
 		std::unordered_map<EnemyTextures, sf::Texture> textures;
 		//sf::Sprite sprite{ textures[0] };
@@ -103,7 +106,7 @@ public:
 
 	// note properties
 	sf::Vector2f note_size{ 5.f, 90.f };
-	sf::Vector2f note_spawn_position{ static_cast<float>(game_size.x), static_cast<float>(game_size.y) - 100.f };
+	//sf::Vector2f note_spawn_position{ static_cast<float>(game_size.x), static_cast<float>(game_size.y) - 100.f };
 
 	// note vectors and objects
 	std::deque<Note> notes;
@@ -111,6 +114,8 @@ public:
 	Note note;
 
 	// enemy objects
+	std::deque<Enemy> enemies;
+	std::deque<Enemy> fadingEnemies;
 	Enemy enemy;
 
 	// player/sword objects
@@ -118,6 +123,7 @@ public:
 
 	// Scenery / Layout textures
 	std::unordered_map<LayoutTextures, sf::Texture> layoutTextures;
+	std::unordered_map<uiTextures, sf::Texture> uiTextures;
 
 	// Getters / Setters
 	bool getRunStatus() const;
@@ -128,6 +134,8 @@ public:
 	void spawnNote();
 	void fadeNote(Note& note);
 	void gradeNote(Note& note);
+	void spawnEnemy();
+	//void fadeEnemy(Enemy& enemy);
 
 	void update();
 	void updateNotes();
@@ -138,6 +146,8 @@ public:
 	void renderNotes();
 	void renderLayout();
 	void renderPauseMenu();
+	void renderEnemies();
+	void renderBorder();
 	void render();
 
 	void throwLoadError(const std::string& message, std::optional<std::string> path = std::nullopt) const;

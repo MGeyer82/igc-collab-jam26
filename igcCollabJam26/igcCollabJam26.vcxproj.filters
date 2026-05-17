@@ -53,6 +53,9 @@
     <ClInclude Include="SFX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Layout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\test_1.wav">
@@ -179,6 +182,24 @@
     </Image>
     <Image Include="assets\sprites\player\up_swing_2.png">
       <Filter>Resource Files\sprites\player</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\enter.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\enter_pressed.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\pause_closed.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\pause_open.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\space.png">
+      <Filter>Resource Files\sprites\layout</Filter>
+    </Image>
+    <Image Include="assets\sprites\layout\space_pressed.png">
+      <Filter>Resource Files\sprites\layout</Filter>
     </Image>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ enum class BGM
 };
 
 const std::unordered_map<BGM, std::string> music_paths{
-    { BGM::STAGE_1,     "assets/music/test_1.wav"          },
-    { BGM::STAGE_2,     "assets/music/dark_forest.wav"     },
-    { BGM::STAGE_3,     "assets/music/frantic_castle.wav"  }
+    { BGM::STAGE_1,     "assets/music/dark_forest.wav"          },
+    { BGM::STAGE_2,     "assets/music/test_1.wav"               },
+    { BGM::STAGE_3,     "assets/music/frantic_castle.wav"       }
 };
