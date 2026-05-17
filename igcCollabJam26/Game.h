@@ -41,6 +41,11 @@ private:
 	sf::Vector2f game_size{ 1280.f, 720.f };
 	float window_fps_limit = 60.f;
 
+	float border_edge_size;
+	sf::Vector2f rhythm_bar_size;
+	sf::Vector2f rhythm_bar_pos;
+	sf::Vector2f judge_line_pos;
+
 	// -- Sprites --
 	std::vector<sf::Sprite> game_sprites;
 
@@ -62,6 +67,7 @@ private:
 
 	bool pressed;
 	bool was_pressed = false;
+	bool is_paused = false;
 
 public:
 	// Constructor / Destructor
@@ -75,6 +81,8 @@ public:
 		bool faded = false;
 		float fadeTimer = 0.f;
 	};
+
+	sf::Vector2f note_spawn_pos;
 
 	struct Player {
 		int hp = 0;
@@ -94,7 +102,7 @@ public:
 	sf::RectangleShape judge_line;
 
 	// note properties
-	sf::Vector2f note_size{ 5.f, 45.f };
+	sf::Vector2f note_size{ 5.f, 90.f };
 	sf::Vector2f note_spawn_position{ static_cast<float>(game_size.x), static_cast<float>(game_size.y) - 100.f };
 
 	// note vectors and objects
@@ -118,13 +126,18 @@ public:
 	// Functions
 	void pollEvents();
 	void spawnNote();
+	void fadeNote(Note& note);
+	void gradeNote(Note& note);
+
 	void update();
 	void updateNotes();
+	void updateScenes();
+	void updateEnemies();
+
 	void renderJudgeLine();
 	void renderNotes();
 	void renderLayout();
-	void fadeNote(Note& note);
-	void gradeNote(Note& note);
+	void renderPauseMenu();
 	void render();
 
 	void throwLoadError(const std::string& message, std::optional<std::string> path = std::nullopt) const;

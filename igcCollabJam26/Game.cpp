@@ -13,10 +13,10 @@ Game::Game()
 	loadSFX();
 
 	initVariables();
+	initSprites();
 	initWindow();
 	resizeWindow();
 	initLayout();
-	initSprites();
 	initObjects();
 }
 
@@ -105,11 +105,9 @@ void Game::resizeWindow()
 {
 	sf::Vector2u window_size = getWindowSize();
 
-	float windowRatio =
-		static_cast<float>(window_size.x) / window_size.y;
+	float windowRatio = static_cast<float>(window_size.x) / window_size.y;
 
-	float viewRatio =
-		static_cast<float>(game_size.x) / game_size.y;
+	float viewRatio = static_cast<float>(game_size.x) / game_size.y;
 
 	float sizeX = 1.f;
 	float sizeY = 1.f;
@@ -122,25 +120,43 @@ void Game::resizeWindow()
 	{
 		sizeX = viewRatio / windowRatio;
 	}
-}
-
-void Game::initVariables()
-{
-	// initialize variables
-	window = nullptr;
-}
-
-void Game::initWindow()
-{
-	// initialize window
-	window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Cursed Cadence", sf::State::Fullscreen);
+	else
+	{
+		sizeY = windowRatio / viewRatio;
+		posY = (1.f - sizeY) / 2.f;
+	}
 
 	sf::View view(sf::FloatRect(
 		{ 0.f, 0.f },
 		{ game_size.x, game_size.y }
 	));
 
+	view.setViewport(sf::FloatRect(
+		{ posX, posY },
+		{ sizeX, sizeY }
+	));
+
 	window->setView(view);
+}
+
+void Game::initVariables()
+{
+	// initialize variables
+	window = nullptr;
+
+	// game dimensions
+	border_edge_size = 25.f;
+	rhythm_bar_size = { 1230.f, 175.f };
+	rhythm_bar_pos = { border_edge_size, game_size.y - border_edge_size - rhythm_bar_size.y };
+	note_spawn_pos = { game_size.x - border_edge_size - note_size.x,
+					   game_size.y - border_edge_size - (rhythm_bar_size.y / 2.f) - (note_size.y / 2.f) };
+	judge_line_pos = { border_edge_size + 50.f, note_spawn_pos.y };
+}
+
+void Game::initWindow()
+{
+	// initialize window
+	window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Cursed Cadence", sf::State::Fullscreen);
 
 	window->setFramerateLimit(60);
 }
@@ -163,13 +179,13 @@ void Game::initLayout()
 	hitBox.setPosition({ 100.f, 250.f });
 
 	// rhythm section box
-	rhythmBox.setSize({ 1280.f - 50.f, 175.f });
+	rhythmBox.setSize({ 1235.f, 175.f });
 
 	// enemy box
 	enemyBox.setSize({ 140.f, 200.f });
 
 	// border box
-	borderBox.setSize({ 1280.f - 50.f, 720.f - 50.f });
+	borderBox.setSize({ 1280.f, 720.f });
 
 	// world box
 	worldBox.setSize({ 1230.f, 720.f - 225.f });
@@ -180,9 +196,7 @@ void Game::initObjects()
 	// init judgement line
 	judge_line.setSize(note_size);
 	judge_line.setFillColor(sf::Color::White);
-	judge_line.setPosition({ 50.f, game_size.y - 100.f });
-
-	// init enemy 
+	judge_line.setPosition(judge_line_pos);
 
 }
 
@@ -193,7 +207,8 @@ void Game::initSprites()
 	border_sprite.setPosition({ 0.f, 0.f });
 
 	sf::Sprite rhythm_sprite(layoutTextures.at(LayoutTextures::RHYTHM_BAR));
-	rhythm_sprite.setPosition({ 25.f, 580.f });
+	rhythm_sprite.setPosition(rhythm_bar_pos);
+	//rhythm_sprite.setScale({ 1.f, 0.75f });
 
 	sf::Sprite player_sprite(player.textures.at(PlayerTextures::IDLE));
 	player_sprite.setPosition({ 160.f, 100.f });
@@ -201,8 +216,9 @@ void Game::initSprites()
 	sf::Sprite enemy_sprite(enemy.textures.at(EnemyTextures::MOVE_DOWN));
 	enemy_sprite.setPosition({ 750.f, 150.f });
 
-	sf::Sprite world_sprite(layoutTextures.at(LayoutTextures::OUTDOORS_1));
+	sf::Sprite world_sprite(layoutTextures.at(LayoutTextures::CASTLE_1));
 	world_sprite.setPosition({ 25.f, 25.f });
+	world_sprite.setScale({ 0.95f, 0.95f });
 
 
 	game_sprites.push_back(world_sprite);
@@ -244,6 +260,12 @@ void Game::pollEvents()
 			switch (keyPress->code)
 			{
 				case sf::Keyboard::Key::Escape:
+					// open pause menu
+					bgm[BGM::STAGE_1].pause();
+					is_paused = true;
+					break;
+
+				case sf::Keyboard::Key::Q:
 					window->close();
 					break;
 			
@@ -259,7 +281,8 @@ void Game::pollEvents()
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
-
+			bgm[BGM::STAGE_1].play();
+			is_paused = false;
 		}
 
 		// Space key press handling - note hit detection
@@ -286,7 +309,7 @@ void Game::pollEvents()
 
 void Game::spawnNote()
 {
-	note.shape.setPosition(note_spawn_position);
+	note.shape.setPosition(note_spawn_pos);
 	note.shape.setFillColor(sf::Color::Red);
 	note.shape.setSize(note_size);
 
@@ -384,9 +407,24 @@ void Game::updateNotes()
 	}
 }
 
+void Game::updateScenes()
+{
+
+}
+
+void Game::updateEnemies()
+{
+
+}
+
 void Game::update()
 {
 	pollEvents();
+
+	if (is_paused)
+	{
+		return;
+	}
 
 	// run implementation
 	if (bgm[BGM::STAGE_1].getStatus() == sf::Music::Status::Playing)
@@ -396,6 +434,9 @@ void Game::update()
 
 		updateNotes();
 	}
+
+	updateScenes();
+	updateEnemies();
 }
 
 void Game::renderJudgeLine()
@@ -425,6 +466,18 @@ void Game::renderLayout()
 	}
 }
 
+void Game::renderPauseMenu()
+{
+	sf::RectangleShape pause_rect;
+
+	pause_rect.setFillColor(sf::Color(0, 0, 0, 128));
+	pause_rect.setPosition({ 0.f, 0.f });
+	pause_rect.setSize(game_size);
+
+	window->draw(pause_rect);
+
+}
+
 void Game::render()
 {
 	// clear the screen - default black
@@ -434,6 +487,11 @@ void Game::render()
 	renderLayout();
 	renderJudgeLine();
 	renderNotes();
+
+	if (is_paused)
+	{
+		renderPauseMenu();
+	}
 
 	// tell the window we're done drawing
 	window->display();
